@@ -75,7 +75,7 @@ public class Exporter {
         }
         dateFormat = new SimpleDateFormat("dd-MM-yyyy-HH-mm-ss-SSS");
 
-        File outputFile = new File(packages, versions.name + dateFormat.format(new Date()) + ".zip");
+        File outputFile = new File(packages, versions.name + "-" + dateFormat.format(new Date()) + ".zip");
 
         ZipUtil.pack(input, outputFile);
         downloadablePackageInfo.fileName = outputFile.getName();
