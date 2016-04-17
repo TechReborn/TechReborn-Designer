@@ -1,0 +1,97 @@
+apply plugin: 'java'
+apply plugin: 'eclipse'
+apply plugin: 'idea'
+apply plugin: 'application'
+apply plugin: 'maven'
+apply plugin: 'maven-publish'
+
+sourceCompatibility = 1.8
+targetCompatibility = 1.8
+
+repositories {
+    maven {
+        name = "Modmuss50"
+        url = "http://maven.modmuss50.me/"
+    }
+	mavenCentral()
+}
+
+version = "1.0.0"
+
+def ENV = System.getenv()
+if (ENV.BUILD_NUMBER) {
+    version = version + "." + "${System.getenv().BUILD_NUMBER}"
+}
+
+group = 'TechReborn-Designer'
+mainClassName = "techreborn.manual.designer.ManualDesigner"
+
+dependencies {
+   compile 'com.google.code.gson:gson:2.3.1'
+    compile 'org.zeroturnaround:zt-zip:1.9'
+    compile 'org.slf4j:slf4j-api:1.7.21'
+    compile 'org.slf4j:slf4j-simple:1.7.21'
+	compile 'commons-codec:commons-codec:1.10'
+
+
+}
+
+jar  {
+    manifest { attributes 'Main-Class': 'techreborn.manual.designer.ManualDesigner' }
+    from { configurations.compile.collect { it.isDirectory() ? it : zipTree(it) } }
+}
+
+uploadArchives {
+    repositories {
+        mavenDeployer {
+            //This is used when the build is done on a slave node
+		if (project.hasProperty('mavenPass'))
+        {
+			println 'Uploading to remote Maven Repo'
+            repository(url: "http://mavenupload.modmuss50.me/") {
+                authentication(userName: "buildslave", password: project.getProperty('mavenPass'))
+            }
+        }
+        else
+        { 
+			//this is when the build is executed on the master node
+			println 'Uploading to local Maven Repo'
+           repository(url: "file:///var/www/maven/")
+        }
+            pom {
+                groupId = "TechReborn-Designer"
+                version = project.version
+                artifactId = project.archivesBaseName
+                project {
+                    name project.archivesBaseName
+                    packaging 'jar'
+                    description 'TechReborn-Designer'
+                    url 'https://github.com/TechReborn/TechReborn-Designer'
+                    scm {
+                        url 'https://github.com/TechReborn/TechReborn-Designer'
+                        connection 'scm:git:git@github.com:TechReborn/TechReborn-Designer.git'
+                        developerConnection 'scm:git:git@github.com:TechReborn/TechReborn-Designer.git'
+                    }
+                    issueManagement {
+                        system 'github'
+                        url 'https://github.com/TechReborn/TechReborn-Designer/issues'
+                    }
+                    licenses {
+                        license {
+                            name 'License'
+                            url 'https://raw.githubusercontent.com/TechReborn/TechReborn-Designer/master/LICENSE.md'
+                            distribution 'repo'
+                        }
+                    }
+                    developers {
+                        developer {
+                            id 'modmuss50'
+                            name 'modmuss50'
+                            roles { role 'developer' }
+                        }
+                    }
+                }
+            }
+        }
+    }
+}
