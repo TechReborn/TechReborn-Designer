@@ -26,7 +26,7 @@ public class ManualDesigner extends Application {
     public static Stage stage;
 
     public static void main(String[] args) {
-            launch(args);
+        launch(args);
     }
 
     @Override
@@ -40,25 +40,18 @@ public class ManualDesigner extends Application {
         fxmlLoader.setBuilderFactory(new JavaFXBuilderFactory());
 
         Parent root = fxmlLoader.load(fxmlUrl.openStream());
-        Scene scene = new Scene(root,900, 550);
+        Scene scene = new Scene(root, 900, 550);
         primaryStage.setTitle("TechReborn Manual Designer");
         primaryStage.setScene(scene);
         primaryStage.show();
         MainWindowController controller = fxmlLoader.getController();
 
-        ManualCatergories.contents = new TreeItem<>("Contents");
-        ManualCatergories.contents.setExpanded(true);
+        ManualCategories.contents = new TreeItem<>("Contents");
+        ManualCategories.contents.setExpanded(true);
 
-        ManualCatergories.blocks = new TreeItem<>("Blocks");
+        controller.treeList.setRoot(ManualCategories.contents);
 
-        ManualCatergories.contents.getChildren().add(ManualCatergories.blocks);
-
-        ManualCatergories.items = new TreeItem<>("Items");
-        ManualCatergories.contents.getChildren().add(ManualCatergories.items);
-
-        controller.treeList.setRoot(ManualCatergories.contents);
-
-        controller.treeList.getSelectionModel().selectedItemProperty().addListener( new ChangeListener() {
+        controller.treeList.getSelectionModel().selectedItemProperty().addListener(new ChangeListener() {
 
             @Override
             public void changed(ObservableValue observable, Object oldValue,
@@ -67,21 +60,21 @@ public class ManualDesigner extends Application {
                 boolean isValid = !SaveSystem.entries.containsKey(selectedItem);
                 controller.textInput.setDisable(isValid);
                 controller.nameTextArea.setDisable(isValid);
-                if(!isValid){
-                    if(SaveSystem.entries.containsKey(selectedItem)){
+                if (!isValid) {
+                    if (SaveSystem.entries.containsKey(selectedItem)) {
                         Entry entry = SaveSystem.entries.get(selectedItem);
                         controller.pageimage.setVisible(false);
-                        if(entry.data != null && entry.data.data != null){
-                            if(entry.data.data.containsKey("text")){
+                        if (entry.data != null && entry.data.data != null) {
+                            if (entry.data.data.containsKey("text")) {
                                 controller.textInput.setText(entry.data.data.get("text"));
                             }
-                            if(entry.data.data.containsKey("image")){
+                            if (entry.data.data.containsKey("image")) {
                                 controller.imageTextArea.setText(entry.data.data.get("image"));
-                                if(SaveSystem.lastSave != null){
+                                if (SaveSystem.lastSave != null) {
                                     File imagesDir = new File(SaveSystem.lastSave, "images");
-                                    if(imagesDir.exists()){
+                                    if (imagesDir.exists()) {
                                         File image = new File(imagesDir, entry.data.data.get("image") + ".png");
-                                        if(image.exists()){
+                                        if (image.exists()) {
                                             controller.pageimage.setImage(new Image(image.toURI().toString()));
                                             controller.pageimage.setVisible(true);
                                         }
@@ -91,11 +84,11 @@ public class ManualDesigner extends Application {
                                 controller.imageTextArea.setText("");
                             }
                             //TODO Improve this
-                        } else  {
+                        } else {
                             controller.textInput.setText("");
                             controller.imageTextArea.setText("");
                         }
-                        if(entry.type.equalsIgnoreCase("image")){
+                        if (entry.type.equalsIgnoreCase("image")) {
                             controller.imageTextArea.setDisable(false);
                         } else {
                             controller.imageTextArea.setDisable(true);

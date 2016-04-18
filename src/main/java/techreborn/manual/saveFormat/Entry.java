@@ -13,7 +13,6 @@ public class Entry {
 
     /**
      * This says what type of page it is, crafting, image, ect
-     *
      */
     public String type;
 

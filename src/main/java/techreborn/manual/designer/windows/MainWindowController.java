@@ -3,18 +3,14 @@ package techreborn.manual.designer.windows;
 import javafx.event.ActionEvent;
 import javafx.event.Event;
 import javafx.scene.control.Button;
-import javafx.scene.control.ChoiceDialog;
+import javafx.scene.control.*;
 import javafx.scene.control.Label;
 import javafx.scene.control.MenuBar;
-import javafx.scene.control.SplitPane;
 import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
-import javafx.scene.control.TextInputDialog;
-import javafx.scene.control.TreeItem;
-import javafx.scene.control.TreeView;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.AnchorPane;
-import techreborn.manual.designer.ManualCatergories;
+import techreborn.manual.designer.ManualCategories;
 import techreborn.manual.designer.fileUtils.LoadSystem;
 import techreborn.manual.designer.fileUtils.SaveSystem;
 import techreborn.manual.saveFormat.Entry;
@@ -44,25 +40,25 @@ public class MainWindowController {
     public Label infoLabel;
 
     public void newItem(Event event) {
-        if(treeList.getSelectionModel().getSelectedItem() instanceof TreeItem){
+        if (treeList.getSelectionModel().getSelectedItem() instanceof TreeItem) {
             TreeItem item = (TreeItem) treeList.getSelectionModel().getSelectedItem();
-            if(item == ManualCatergories.blocks || item == ManualCatergories.items){
+            if (ManualCategories.categories.containsValue(item)) {
                 TextInputDialog dialog = new TextInputDialog("");
                 dialog.setTitle("Name?");
                 dialog.setContentText("Name of item:");
                 Optional<String> result = dialog.showAndWait();
-                if(result.isPresent() && !result.get().isEmpty()){
+                if (result.isPresent() && !result.get().isEmpty()) {
                     TreeItem<String> newItem = new TreeItem<>(result.get());
                     Entry entry = new Entry();
                     entry.name = result.get();
                     ArrayList<String> choices = new ArrayList<>();
-                        choices.add("Text");
-                        choices.add("Image");
+                    choices.add("Text");
+                    choices.add("Image");
 
                     ChoiceDialog<String> choiceDialog = new ChoiceDialog<>("Text", choices);
                     choiceDialog.setTitle("Type?");
                     Optional<String> choiceResult = choiceDialog.showAndWait();
-                    if(choiceResult.isPresent()){
+                    if (choiceResult.isPresent()) {
                         System.out.println(choiceResult.get());
                         entry.type = choiceResult.get();
                     } else {
@@ -83,11 +79,11 @@ public class MainWindowController {
     }
 
     public void deleteItem(Event event) {
-        if(treeList.getSelectionModel().getSelectedItem() instanceof TreeItem){
+        if (treeList.getSelectionModel().getSelectedItem() instanceof TreeItem) {
             TreeItem item = (TreeItem) treeList.getSelectionModel().getSelectedItem();
             TreeItem parent = item.getParent();
-            if(parent != null){
-                if(parent == ManualCatergories.blocks || parent == ManualCatergories.items){
+            if (parent != null) {
+                if (ManualCategories.categories.containsValue(parent)) {
                     parent.getChildren().remove(item);
                 } else {
                     Toolkit.getDefaultToolkit().beep();
@@ -115,7 +111,7 @@ public class MainWindowController {
         System.exit(0);
     }
 
-    public void load(){
+    public void load() {
         textInput.textProperty().addListener((observable, oldValue, newValue) -> {
             textAreaChanged();
         });
@@ -128,19 +124,18 @@ public class MainWindowController {
     }
 
 
-
     public void textAreaChanged() {
-        if(!treeList.getSelectionModel().isEmpty()){
-            if(SaveSystem.entries.containsKey(treeList.getSelectionModel().getSelectedItem())){
+        if (!treeList.getSelectionModel().isEmpty()) {
+            if (SaveSystem.entries.containsKey(treeList.getSelectionModel().getSelectedItem())) {
                 Entry entry = SaveSystem.entries.get(treeList.getSelectionModel().getSelectedItem());
-                if(entry != null){
-                    if(entry.data == null){
+                if (entry != null) {
+                    if (entry.data == null) {
                         entry.data = new EntryData();
                     }
-                    if(entry.data.data == null){
+                    if (entry.data.data == null) {
                         entry.data.data = new HashMap<>();
                     }
-                    if(entry.data.data.containsKey("text")){
+                    if (entry.data.data.containsKey("text")) {
                         entry.data.data.replace("text", textInput.getText());
                     } else {
                         entry.data.data.put("text", textInput.getText());
@@ -152,17 +147,17 @@ public class MainWindowController {
     }
 
     public void imageAreaChanged() {
-        if(!treeList.getSelectionModel().isEmpty()){
-            if(SaveSystem.entries.containsKey(treeList.getSelectionModel().getSelectedItem())){
+        if (!treeList.getSelectionModel().isEmpty()) {
+            if (SaveSystem.entries.containsKey(treeList.getSelectionModel().getSelectedItem())) {
                 Entry entry = SaveSystem.entries.get(treeList.getSelectionModel().getSelectedItem());
-                if(entry != null){
-                    if(entry.data == null){
+                if (entry != null) {
+                    if (entry.data == null) {
                         entry.data = new EntryData();
                     }
-                    if(entry.data.data == null){
+                    if (entry.data.data == null) {
                         entry.data.data = new HashMap<>();
                     }
-                    if(entry.data.data.containsKey("image")){
+                    if (entry.data.data.containsKey("image")) {
                         entry.data.data.replace("image", imageTextArea.getText());
                     } else {
                         entry.data.data.put("image", imageTextArea.getText());
@@ -174,14 +169,25 @@ public class MainWindowController {
     }
 
     public void nameChange() {
-        if(!treeList.getSelectionModel().isEmpty()){
-            if(SaveSystem.entries.containsKey(treeList.getSelectionModel().getSelectedItem())){
+        if (!treeList.getSelectionModel().isEmpty()) {
+            if (SaveSystem.entries.containsKey(treeList.getSelectionModel().getSelectedItem())) {
                 Entry entry = SaveSystem.entries.get(treeList.getSelectionModel().getSelectedItem());
-                if(entry != null){
+                if (entry != null) {
                     entry.registryName = nameTextArea.getText();
                     SaveSystem.entries.replace((TreeItem) treeList.getSelectionModel().getSelectedItem(), entry);
                 }
             }
+        }
+    }
+
+    public void buttonCreateCat(Event event) {
+        TextInputDialog dialog = new TextInputDialog("");
+        dialog.setTitle("Create New Category Dialog");
+        dialog.setHeaderText("Enter a name for the new category!");
+
+        Optional<String> result = dialog.showAndWait();
+        if (result.isPresent()){
+            ManualCategories.createNewCategorie(result.get());
         }
     }
 }

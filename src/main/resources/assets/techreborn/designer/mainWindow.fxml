@@ -43,6 +43,7 @@
                            <children>
                               <Button fx:id="buttonNew" layoutX="8.0" layoutY="12.0" mnemonicParsing="false" onMouseClicked="#newItem" text="New" />
                               <Button fx:id="buttonDelete" layoutX="54.0" layoutY="12.0" mnemonicParsing="false" onMouseClicked="#deleteItem" text="Delete" />
+                              <Button layoutX="170.0" layoutY="12.0" mnemonicParsing="false" onMouseClicked="#buttonCreateCat" text="New Category" />
                            </children>
                         </AnchorPane>
                      </children>

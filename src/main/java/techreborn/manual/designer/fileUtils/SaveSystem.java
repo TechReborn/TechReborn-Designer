@@ -26,29 +26,29 @@ public class SaveSystem {
 
     public static File lastSave = null;
 
-    public static void export(){
+    public static void export() {
         List<Entry> entryList = new ArrayList<>(entries.values());
-        if(master == null){
+        if (master == null) {
             master = new ManualFormat("TechReborn", "techreborn", entryList);
         }
         DirectoryChooser chooser = new DirectoryChooser();
         chooser.setTitle("Select export location");
         File openLocation = new File(".");
-        if(lastSave != null){
+        if (lastSave != null) {
             openLocation = lastSave;
         }
         chooser.setInitialDirectory(openLocation);
         File selectedDirectory = chooser.showDialog(ManualDesigner.stage);
         lastSave = selectedDirectory;
         File imageDir = new File(selectedDirectory, "images");
-        if(!imageDir.exists()){
+        if (!imageDir.exists()) {
             imageDir.mkdir();
         }
         File masterJson = new File(selectedDirectory, "master.json");
-        if(masterJson.exists()){
+        if (masterJson.exists()) {
             masterJson.delete();
         }
-        if(selectedDirectory != null){
+        if (selectedDirectory != null) {
             Gson gson = new GsonBuilder().setPrettyPrinting().create();
             String json = gson.toJson(master);
             try {
